@@ -1,0 +1,15 @@
+# Edit this file, then run ./build_test.sh
+# Each line is one test. The cache is wiped before the next line.
+# A name and a colon are optional. Addresses are hex, from 00 to FF.
+# At most 8 lines. At most 64 addresses in the whole file.
+# The script prints the hit/miss shape, writes it into the sequencer,
+# and builds a bitstream when Go Configure is installed.
+
+temporal: 00 00 00 00 00
+spatial: 00 01 02 03 04 05 06 07
+conflict: 00 10 00 10
+capacity: 00 04 08 0C 00 04 08 0C
+replacement: 00 00 10 00
+independence: 00 04 00 04
+reverse: 03 02 01 00
+top: FC FF

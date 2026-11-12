@@ -1,0 +1,60 @@
+Direct-mapped, 4 lines of 4 bytes. The cache is empty at the start of each test.
+M = miss, about 1.5 s, with a memory read inside it.
+H = hit, about 0.33 s, memory stays low.
+
+0  temporal   M H H H H
+      00  MISS
+      00  HIT
+      00  HIT
+      00  HIT
+      00  HIT
+
+1  spatial   M H H H M H H H
+      00  MISS
+      01  HIT
+      02  HIT
+      03  HIT
+      04  MISS
+      05  HIT
+      06  HIT
+      07  HIT
+
+2  conflict   M M M M
+      00  MISS
+      10  MISS
+      00  MISS
+      10  MISS
+
+3  capacity   M M M M H H H H
+      00  MISS
+      04  MISS
+      08  MISS
+      0C  MISS
+      00  HIT
+      04  HIT
+      08  HIT
+      0C  HIT
+
+4  replacement   M H M M
+      00  MISS
+      00  HIT
+      10  MISS
+      00  MISS
+
+5  independence   M M H H
+      00  MISS
+      04  MISS
+      00  HIT
+      04  HIT
+
+6  reverse   M H H H
+      03  MISS
+      02  HIT
+      01  HIT
+      00  HIT
+
+7  top   M H
+      FC  MISS
+      FF  HIT
+
+8 tests, 39 addresses.

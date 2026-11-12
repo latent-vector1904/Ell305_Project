@@ -1,0 +1,30 @@
+# Clock must be assigned or the design never steps.
+set_io clk_in             CLK
+set_io clk_en             OSC_EN
+
+# Clips already on the board:
+#   A0 = F15 hit, A1 = F14 miss, A2 = F17 mem_read, A3 = F18 request
+set_io cache_hit          PIN_6
+set_io cache_hit_en       PIN_6_OE
+
+set_io cache_miss         PIN_5
+set_io cache_miss_en      PIN_5_OE
+
+set_io mem_read           PIN_8
+set_io mem_read_en        PIN_8_OE
+
+set_io request            PIN_9
+set_io request_en         PIN_9_OE
+
+# Other header pins, not clipped in this capture
+set_io clk_out            PIN_3
+set_io clk_out_en         PIN_3_OE
+
+set_io done               PIN_20
+set_io done_en            PIN_20_OE
+
+set_io cache_state[0]     PIN_23
+set_io cache_state_en[0]  PIN_23_OE
+
+set_io cache_state[1]     PIN_24
+set_io cache_state_en[1]  PIN_24_OE

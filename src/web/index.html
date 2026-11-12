@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cache bench</title>
+<style>
+  :root {
+    --paper: #efeae1;
+    --ink: #221e1a;
+    --muted: #6b645b;
+    --card: #fffcf7;
+    --line: #e2d9cc;
+    --direct: #1d6b5a;
+    --twoway: #8c4e16;
+    --lru: #2c3f73;
+    --hit: #1c7a45;
+    --miss: #a3262d;
+    --hit-bg: #e5f4eb;
+    --miss-bg: #fbeceb;
+    --shadow: 0 1px 1px rgba(40, 30, 16, 0.04), 0 16px 40px rgba(40, 30, 16, 0.06);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 400px at 10% -10%, rgba(140, 98, 57, 0.08), transparent 50%),
+      var(--paper);
+    font-family: "Liberation Sans", "Nimbus Sans", "DejaVu Sans", sans-serif;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  button, input, textarea { font: inherit; color: inherit; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 28px 20px 64px; }
+  header { display: flex; justify-content: space-between; gap: 24px; align-items: flex-end; margin-bottom: 22px; }
+  h1 {
+    margin: 0 0 6px;
+    font-family: "Liberation Serif", "Nimbus Roman", Georgia, serif;
+    font-weight: 500;
+    font-size: 40px;
+    letter-spacing: -0.03em;
+  }
+  .lede { margin: 0; max-width: 640px; color: var(--muted); }
+  .keys { display: flex; gap: 14px; color: var(--muted); font-size: 13px; padding-bottom: 6px; }
+  .keys i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px; }
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+  }
+  .controls { padding: 16px; }
+  .row { display: flex; gap: 16px; align-items: stretch; }
+  textarea {
+    flex: 1;
+    min-height: 74px;
+    resize: vertical;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+    background: #fff;
+    font-family: "Liberation Mono", "DejaVu Sans Mono", ui-monospace, monospace;
+    font-size: 16px;
+    letter-spacing: 0.02em;
+  }
+  textarea:focus { outline: 2px solid rgba(34, 30, 26, 0.25); outline-offset: 1px; }
+  .actions { display: flex; flex-direction: column; gap: 8px; min-width: 148px; }
+  button {
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  button:hover { border-color: #c9bfb0; }
+  button:disabled { opacity: 0.55; cursor: wait; }
+  button.primary { background: var(--ink); color: #f7f3ec; border-color: var(--ink); }
+  .choices { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 12px; }
+  .choices label { display: flex; gap: 6px; align-items: center; cursor: pointer; }
+  .check { margin-left: auto; color: var(--muted); }
+  .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .presets button { border-radius: 999px; padding: 5px 10px; background: transparent; font-size: 13px; }
+  #message { min-height: 1.4em; margin: 10px 2px; color: var(--miss); }
+  #message.ok { color: var(--muted); }
+  .compare { margin-top: 8px; padding: 16px 16px 8px; }
+  .meters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .meter { padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+  .meter b { display: block; font-family: "Liberation Serif", Georgia, serif; font-size: 32px; font-weight: 500; letter-spacing: -0.03em; line-height: 1.1; }
+  .meter .top { display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; margin-bottom: 4px; }
+  .track { height: 8px; border-radius: 99px; background: #f0e7e4; display: flex; overflow: hidden; margin: 10px 0 6px; }
+  .track i { display: block; height: 100%; }
+  .track .h { background: var(--hit); }
+  .track .m { background: var(--miss); }
+  .sub { color: var(--muted); font-size: 13px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 14px; font-variant-numeric: tabular-nums; }
+  th, td { text-align: right; padding: 7px 8px; border-top: 1px solid var(--line); }
+  th:first-child, td:first-child { text-align: left; color: var(--muted); }
+  th { font-weight: 600; color: var(--ink); }
+  td.best { font-weight: 700; }
+  .same { margin: 8px 0 0; color: var(--muted); font-size: 13px; }
+  .aligned { display: grid; gap: 4px; margin-top: 12px; overflow-x: auto; }
+  .aligned .line { display: flex; gap: 3px; align-items: center; min-height: 18px; }
+  .aligned .line span.name { width: 68px; flex: none; font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .cell {
+    width: 16px; height: 16px; flex: none; border-radius: 3px;
+  }
+  .cell.hit { background: var(--hit); }
+  .cell.miss { background: var(--miss); }
+  .boards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px; }
+  .board { padding: 14px 14px 10px; border-top: 4px solid var(--direct); }
+  .board.twoway { border-top-color: var(--twoway); }
+  .board.lru { border-top-color: var(--lru); }
+  .board h2 { margin: 0; font-size: 18px; font-weight: 650; letter-spacing: -0.02em; }
+  .geom { color: var(--muted); font-size: 13px; margin: 4px 0 10px; }
+  .bits { display: flex; height: 26px; border-radius: 6px; overflow: hidden; color: white; font-size: 11px; letter-spacing: 0.01em; margin-bottom: 12px; }
+  .bits span { display: flex; align-items: center; justify-content: center; }
+  .board .head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .ghost { padding: 4px 8px; font-size: 13px; }
+  .slot { display: grid; grid-template-columns: 108px 1fr; gap: 4px 8px; padding: 8px 0; border-top: 1px solid var(--line); }
+  .slot strong { font-weight: 600; font-size: 13px; }
+  .mark { color: var(--muted); font-size: 12px; }
+  .bytes { font-family: "Liberation Mono", "DejaVu Sans Mono", ui-monospace, monospace; font-size: 13px; }
+  .bytes i {
+    font-style: normal; display: inline-block; min-width: 1.7em; text-align: center;
+    padding: 1px 3px; border-radius: 4px;
+  }
+  .bytes i.on { background: var(--ink); color: #f7f3ec; }
+  .empty { color: var(--muted); }
+  .trace { display: flex; gap: 3px; overflow-x: auto; padding: 8px 0 4px; min-height: 22px; }
+  .log-wrap { overflow-x: auto; }
+  .log { width: 100%; min-width: 520px; font-size: 12px; margin-top: 4px; }
+  .log td, .log th { padding: 4px 6px; white-space: nowrap; }
+  .pill { font-weight: 700; letter-spacing: 0.03em; }
+  .pill.hit { color: var(--hit); }
+  .pill.miss { color: var(--miss); }
+  footer { margin-top: 18px; color: var(--muted); font-size: 13px; }
+  footer code { font-family: "Liberation Mono", "DejaVu Sans Mono", ui-monospace, monospace; }
+  @media (max-width: 980px) {
+    .row, .meters, .boards, header { display: block; }
+    .actions { flex-direction: row; margin-top: 10px; }
+    .check { margin-left: 0; }
+    .meter, .board { margin-top: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Cache bench</h1>
+      <p class="lede">The three 16-byte read-only caches from the board, driven by the C++ simulator. Type addresses, empty a cache, and compare the hit path.</p>
+    </div>
+    <div class="keys">
+      <span><i style="background:var(--direct)"></i>Direct</span>
+      <span><i style="background:var(--twoway)"></i>Two-way</span>
+      <span><i style="background:var(--lru)"></i>LRU</span>
+    </div>
+  </header>
+
+  <section class="panel controls">
+    <div class="row">
+      <textarea id="addresses" spellcheck="false" placeholder="00 10 00 10"></textarea>
+      <div class="actions">
+        <button class="primary" id="run" type="button">Access</button>
+        <button id="step" type="button">Step</button>
+        <button id="empty-chosen" type="button">Empty chosen</button>
+        <button id="empty-all" type="button">Empty all</button>
+      </div>
+    </div>
+    <div class="choices">
+      <label><input type="radio" name="target" value="all" checked> All three</label>
+      <label><input type="radio" name="target" value="direct"> Direct-mapped</label>
+      <label><input type="radio" name="target" value="twoway"> Two-way</label>
+      <label><input type="radio" name="target" value="lru"> LRU</label>
+      <label class="check"><input type="checkbox" id="clear-first" checked> Empty the chosen caches before Access</label>
+    </div>
+    <div class="presets" id="presets"></div>
+  </section>
+  <p id="message"></p>
+  <section class="panel compare" id="compare"></section>
+  <section class="boards" id="boards"></section>
+  <footer>
+    <p>Each cache is 4 lines of 4 bytes in front of a 256-byte memory. The byte at an address is the address itself. A hit costs 2 enable cycles and a miss costs 9, so AMAT = 2 + 7 × miss rate.</p>
+    <p>Direct-mapped uses tag <code>[7:4]</code>, index <code>[3:2]</code>, offset <code>[1:0]</code>. Two-way uses tag <code>[7:3]</code>, set <code>[2]</code>, offset <code>[1:0]</code>, fills an empty way first, then the least recently used way. Fully associative uses tag <code>[7:2]</code> and offset <code>[1:0]</code>, and any line may hold any block.</p>
+    <p>This page only displays results. The placement, the byte, and the counts come from <code>cache_bench</code>.</p>
+  </footer>
+</div>
+<script>
+const presets = [
+  ["Conflict", "00 10 00 10"],
+  ["Replacement", "00 00 10 00"],
+  ["Three blocks", "00 10 00 20 00 10"],
+  ["Capacity", "00 04 08 0C 00 04 08 0C"],
+  ["Spatial", "00 01 02 03"],
+  ["Temporal", "00 00 00 00"],
+  ["LRU victim", "00 04 08 0C 04 08 0C 10"]
+];
+const bits = {
+  direct: [["tag 7:4", 4, "#1d6b5a"], ["index 3:2", 2, "#3d8f7c"], ["off 1:0", 2, "#8a8175"]],
+  twoway: [["tag 7:3", 5, "#8c4e16"], ["set 2", 1, "#c4844a"], ["off 1:0", 2, "#8a8175"]],
+  lru: [["tag 7:2", 6, "#2c3f73"], ["off 1:0", 2, "#8a8175"]]
+};
+const shortName = { direct: "Direct", twoway: "Two-way", lru: "LRU" };
+const blurb = {
+  direct: "Four lines. The index picks the only line that may hold the block.",
+  twoway: "Two sets of two ways. An empty way is used before the LRU way.",
+  lru: "Four lines, no index. The least recently used full line is replaced."
+};
+
+const field = document.getElementById("addresses");
+const message = document.getElementById("message");
+let busy = false;
+let stepKey = "";
+let stepAt = 0;
+
+function hex(n) {
+  return "0x" + Number(n).toString(16).toUpperCase().padStart(2, "0");
+}
+function parseAddresses(text) {
+  const parts = text.trim().split(/[\s,;]+/).filter(Boolean);
+  if (!parts.length) throw new Error("Type one or more addresses, in hex.");
+  return parts.map((part) => {
+    const token = part.toLowerCase().replace(/^0x/, "");
+    if (!/^[0-9a-f]{1,2}$/.test(token)) {
+      throw new Error(part + " is not a hex address from 00 to FF.");
+    }
+    return parseInt(token, 16);
+  });
+}
+function target() {
+  return document.querySelector("input[name=target]:checked").value;
+}
+function setMessage(text, ok) {
+  message.textContent = text || "";
+  message.className = ok ? "ok" : "";
+}
+function setBusy(on) {
+  document.querySelectorAll("button").forEach((button) => { button.disabled = on; });
+}
+async function post(path, payload) {
+  const response = await fetch(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "The simulator rejected that list.");
+  return data;
+}
+async function run(job) {
+  if (busy) return;
+  busy = true;
+  setBusy(true);
+  try {
+    const data = await job();
+    render(data);
+  } catch (error) {
+    const offline = !error.message || error.message === "Failed to fetch";
+    setMessage(offline
+      ? "The C++ simulator is not running. From the project folder, run ./cache_bench and open the address it prints."
+      : error.message);
+  } finally {
+    busy = false;
+    setBusy(false);
+  }
+}
+function rate(part, whole) {
+  return whole ? (100 * part) / whole : null;
+}
+function fmtRate(part, whole) {
+  const value = rate(part, whole);
+  return value === null ? "—" : value.toFixed(1) + "%";
+}
+function amat(stats) {
+  return stats.accesses ? stats.cycles / stats.accesses : null;
+}
+function fmtAmat(stats) {
+  const value = amat(stats);
+  return value === null ? "—" : value.toFixed(2);
+}
+function bitsHtml(id) {
+  return `<div class="bits">${bits[id].map(([label, width, color]) =>
+    `<span style="flex:${width};background:${color}">${label}</span>`).join("")}</div>`;
+}
+function slotHtml(slot) {
+  if (!slot.valid) {
+    return `<div class="slot"><strong>${slot.name}</strong><span class="empty">empty${slot.mark ? " · " + slot.mark : ""}</span></div>`;
+  }
+  const bytes = slot.bytes.map((byte, index) =>
+    `<i class="${index === slot.last_offset ? "on" : ""}">${hex(byte).slice(2)}</i>`).join(" ");
+  const mark = slot.mark ? `<span class="mark"> · ${slot.mark}</span>` : "";
+  return `<div class="slot"><strong>${slot.name}${mark}</strong><span class="bytes">tag ${hex(slot.tag)} · block ${hex(slot.base)}<br>${bytes}</span></div>`;
+}
+function traceHtml(log) {
+  if (!log.length) return `<div class="trace"><span class="empty">No accesses yet.</span></div>`;
+  return `<div class="trace">${log.map((event) =>
+    `<i class="cell ${event.hit ? "hit" : "miss"}" title="${hex(event.address)} ${event.hit ? "hit" : "miss"}"></i>`).join("")}</div>`;
+}
+function logHtml(log) {
+  const shown = log.slice(-12);
+  if (!shown.length) return "";
+  const rows = shown.map((event) => `<tr>
+    <td>${hex(event.address)}</td>
+    <td class="pill ${event.hit ? "hit" : "miss"}">${event.hit ? "HIT" : "MISS"}</td>
+    <td>${hex(event.data)}</td>
+    <td>${hex(event.tag)}</td>
+    <td>${event.index < 0 ? "—" : event.index}</td>
+    <td>${event.offset}</td>
+    <td>${event.place}</td>
+    <td>${event.cycles}</td>
+    <td>${event.hit ? "hit" : event.cold ? "cold" : "replace"}</td>
+  </tr>`).join("");
+  const note = log.length > shown.length ? `<p class="sub">Latest 12 of ${log.length}.</p>` : "";
+  return `${note}<div class="log-wrap"><table class="log"><thead><tr>
+    <th>Addr</th><th></th><th>Data</th><th>Tag</th><th>Set</th><th>Off</th><th>Where</th><th>Cyc</th><th>Why</th>
+  </tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function render(state) {
+  const caches = state.caches;
+  const hitRates = caches.map((cache) => rate(cache.stats.hits, cache.stats.accesses));
+  const amats = caches.map((cache) => amat(cache.stats));
+  const comparable = state.same && caches[0].stats.accesses > 0;
+  const bestHit = comparable ? Math.max(...hitRates) : null;
+  const bestAmat = comparable ? Math.min(...amats) : null;
+  const hitSpread = comparable && hitRates.some((value) => value !== hitRates[0]);
+  const amatSpread = comparable && amats.some((value) => value !== amats[0]);
+
+  document.getElementById("compare").innerHTML = `
+    <div class="meters">${caches.map((cache) => {
+      const hits = cache.stats.accesses ? (100 * cache.stats.hits) / cache.stats.accesses : 0;
+      const misses = cache.stats.accesses ? 100 - hits : 0;
+      return `<div class="meter">
+        <div class="top"><span>${cache.name}</span><span>AMAT ${fmtAmat(cache.stats)}</span></div>
+        <b>${fmtRate(cache.stats.hits, cache.stats.accesses)}</b>
+        <div class="track"><i class="h" style="width:${hits}%"></i><i class="m" style="width:${misses}%"></i></div>
+        <div class="sub">${cache.stats.hits} hits · ${cache.stats.misses} misses · ${cache.stats.cycles} enable cycles</div>
+      </div>`;
+    }).join("")}</div>
+    <table>
+      <thead><tr><th>Quantity</th>${caches.map((cache) => `<th>${shortName[cache.id]}</th>`).join("")}</tr></thead>
+      <tbody>
+        ${row("Accesses", caches, (cache) => cache.stats.accesses)}
+        ${row("Hits", caches, (cache) => cache.stats.hits)}
+        ${row("Misses", caches, (cache) => cache.stats.misses)}
+        ${row("Hit rate", caches, (cache) => fmtRate(cache.stats.hits, cache.stats.accesses), (cache, index) => hitSpread && hitRates[index] === bestHit)}
+        ${row("Miss rate", caches, (cache) => fmtRate(cache.stats.misses, cache.stats.accesses))}
+        ${row("Cold misses", caches, (cache) => cache.stats.cold)}
+        ${row("Replacements", caches, (cache) => cache.stats.replacements)}
+        ${row("Enable cycles", caches, (cache) => cache.stats.cycles)}
+        ${row("AMAT", caches, (cache) => fmtAmat(cache.stats), (cache, index) => amatSpread && amats[index] === bestAmat)}
+        ${row("Lines in use", caches, (cache) => cache.slots.filter((slot) => slot.valid).length + " / " + cache.slots.length)}
+      </tbody>
+    </table>
+    <p class="same">${state.same
+      ? "All three caches have seen the same addresses, in the same order."
+      : "These caches have been driven separately. Empty all, then access with All three, for a matched comparison."}</p>
+    ${state.same && caches[0].log.length ? `<div class="aligned">${caches.map((cache) =>
+      `<div class="line"><span class="name">${shortName[cache.id]}</span>${cache.log.map((event) =>
+        `<i class="cell ${event.hit ? "hit" : "miss"}" title="${hex(event.address)} ${event.hit ? "hit" : "miss"}"></i>`).join("")}</div>`).join("")}</div>` : ""}
+  `;
+
+  document.getElementById("boards").innerHTML = caches.map((cache) => `
+    <article class="panel board ${cache.id}">
+      <div class="head">
+        <h2>${cache.name}</h2>
+        <button class="ghost" type="button" data-empty="${cache.id}">Empty</button>
+      </div>
+      <p class="geom">${blurb[cache.id]}</p>
+      ${bitsHtml(cache.id)}
+      ${cache.slots.map(slotHtml).join("")}
+      ${traceHtml(cache.log)}
+      ${logHtml(cache.log)}
+    </article>
+  `).join("");
+}
+function row(label, caches, value, best) {
+  return `<tr><td>${label}</td>${caches.map((cache, index) =>
+    `<td class="${best && best(cache, index) ? "best" : ""}">${value(cache)}</td>`).join("")}</tr>`;
+}
+
+document.getElementById("presets").innerHTML = presets.map(([name]) =>
+  `<button type="button" data-preset="${name}">${name}</button>`).join("");
+
+document.getElementById("presets").onclick = (event) => {
+  const button = event.target.closest("button");
+  if (!button) return;
+  const found = presets.find(([name]) => name === button.dataset.preset);
+  field.value = found[1];
+  stepKey = "";
+  stepAt = 0;
+  setMessage(found[0] + " is in the box. Access runs it, Step walks one address at a time.", true);
+  field.focus();
+};
+
+document.getElementById("run").onclick = () => run(async () => {
+  const addresses = parseAddresses(field.value);
+  stepKey = addresses.join(",");
+  stepAt = addresses.length;
+  const data = await post("/api/access", {
+    target: target(),
+    clear: document.getElementById("clear-first").checked,
+    addresses
+  });
+  setMessage("Ran " + addresses.length + " address" + (addresses.length === 1 ? "" : "es") + " on " + targetLabel() + ".", true);
+  return data;
+});
+
+document.getElementById("step").onclick = () => run(async () => {
+  const addresses = parseAddresses(field.value);
+  const key = addresses.join(",");
+  if (key !== stepKey) {
+    stepKey = key;
+    stepAt = 0;
+  }
+  if (stepAt >= addresses.length) {
+    throw new Error("End of the list. Edit the addresses, or empty the cache and step from the start.");
+  }
+  const address = addresses[stepAt];
+  const data = await post("/api/access", { target: target(), clear: false, addresses: [address] });
+  stepAt += 1;
+  setMessage("Stepped " + hex(address) + " · " + stepAt + " of " + addresses.length + " on " + targetLabel() + ".", true);
+  return data;
+});
+
+document.getElementById("empty-chosen").onclick = () => run(async () => {
+  stepAt = 0;
+  stepKey = "";
+  const data = await post("/api/reset", { target: target(), clear: true });
+  setMessage("Emptied " + targetLabel() + ".", true);
+  return data;
+});
+document.getElementById("empty-all").onclick = () => run(async () => {
+  stepAt = 0;
+  stepKey = "";
+  const data = await post("/api/reset", { target: "all", clear: true });
+  setMessage("All three caches are empty.", true);
+  return data;
+});
+document.getElementById("boards").onclick = (event) => {
+  const button = event.target.closest("button[data-empty]");
+  if (!button) return;
+  run(async () => {
+    const data = await post("/api/reset", { target: button.dataset.empty, clear: true });
+    setMessage("Emptied " + targetLabel(button.dataset.empty) + ".", true);
+    return data;
+  });
+};
+function targetLabel(value) {
+  value = value || target();
+  if (value === "all") return "all three caches";
+  if (value === "direct") return "the direct-mapped cache";
+  if (value === "twoway") return "the two-way cache";
+  return "the LRU cache";
+}
+
+fetch("/api/state").then((response) => response.json()).then(render).catch(() => {
+  setMessage("The C++ simulator is not running. From the project folder, run ./cache_bench and open the address it prints.");
+});
+</script>
+</body>
+</html>

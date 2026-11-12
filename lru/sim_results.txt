@@ -1,0 +1,49 @@
+TEMPORAL  64 blocks x 5 reads of the block base
+SPATIAL   64 blocks x 4 starting offsets
+EMPTY LINE  two blocks must both survive
+LRU VICTIM  refresh three of the four, then a new block
+  victim block 00 was replaced by 10
+  victim block 04 was replaced by 10
+  victim block 08 was replaced by 10
+  victim block 0c was replaced by 10
+CAPACITY WALK  blocks 0..63, then the last four
+
+COMPARISON  same addresses, LRU RTL against the direct-mapped rule
+temporal
+  temporal  addr 00   LRU MISS   direct-mapped MISS
+  temporal  addr 00   LRU HIT    direct-mapped HIT 
+  temporal  addr 00   LRU HIT    direct-mapped HIT 
+  temporal  addr 00   LRU HIT    direct-mapped HIT 
+  temporal  addr 00   LRU HIT    direct-mapped HIT 
+spatial
+  spatial  addr 00   LRU MISS   direct-mapped MISS
+  spatial  addr 01   LRU HIT    direct-mapped HIT 
+  spatial  addr 02   LRU HIT    direct-mapped HIT 
+  spatial  addr 03   LRU HIT    direct-mapped HIT 
+  spatial  addr 04   LRU MISS   direct-mapped MISS
+  spatial  addr 05   LRU HIT    direct-mapped HIT 
+  spatial  addr 06   LRU HIT    direct-mapped HIT 
+  spatial  addr 07   LRU HIT    direct-mapped HIT 
+conflict
+  conflict  addr 00   LRU MISS   direct-mapped MISS
+  conflict  addr 10   LRU MISS   direct-mapped MISS
+  conflict  addr 00   LRU HIT    direct-mapped MISS
+  conflict  addr 10   LRU HIT    direct-mapped MISS
+capacity
+  capacity  addr 00   LRU MISS   direct-mapped MISS
+  capacity  addr 04   LRU MISS   direct-mapped MISS
+  capacity  addr 08   LRU MISS   direct-mapped MISS
+  capacity  addr 0c   LRU MISS   direct-mapped MISS
+  capacity  addr 00   LRU HIT    direct-mapped HIT 
+  capacity  addr 04   LRU HIT    direct-mapped HIT 
+  capacity  addr 08   LRU HIT    direct-mapped HIT 
+  capacity  addr 0c   LRU HIT    direct-mapped HIT 
+replacement
+  replace  addr 00   LRU MISS   direct-mapped MISS
+  replace  addr 00   LRU HIT    direct-mapped HIT 
+  replace  addr 10   LRU MISS   direct-mapped MISS
+  replace  addr 00   LRU HIT    direct-mapped MISS
+
+accesses 1498   hits 1076   misses 422
+misses that read memory 422   hits that read memory 0   misses with no read 0
+ALL TESTS PASSED

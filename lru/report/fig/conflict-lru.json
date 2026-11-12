@@ -1,0 +1,9 @@
+{
+  "signal": [
+    { "name": "request",  "wave": "10.10.10.10." },
+    { "name": "miss",     "wave": "01.01.0....." },
+    { "name": "hit",      "wave": "0......10.10" },
+    { "name": "mem_read", "wave": "010.10......" }
+  ],
+  "head": { "text": "LRU conflict" }
+}

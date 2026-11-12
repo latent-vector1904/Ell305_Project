@@ -1,0 +1,8 @@
+%%{init: {"theme": "neutral"}}%%
+stateDiagram-v2
+  [*] --> IDLE
+  IDLE --> COMPARE: request
+  COMPARE --> RETURN: tag matches a valid line
+  COMPARE --> FETCH: miss
+  FETCH --> RETURN: four bytes stored
+  RETURN --> IDLE: byte returned

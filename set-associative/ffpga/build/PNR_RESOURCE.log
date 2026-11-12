@@ -1,0 +1,35 @@
+
+
+####   Resource Utilization Report   ####
+
+    Top level module name: cache_sim_top
+
+    Resource usage:
+      47 Logic 6-LUT RBBs
+          131 RBB LUTs utilized (up to 4 per RBB)
+           83 RBB FFs utilized (up to 4 pairs per RBB)
+      10 I/O RBBs
+           19 Output pins
+            9 Output FFs utilized
+       1 Clock
+           Clock 0: net     4, clk_in, Fanout: 52 RBBs
+           Total 1 unique clocks
+    need 0 DSP and 1 Logic-Memory EFLX 1K Tiles.
+
+ 
+####   Resource Utilization Complete   ####
+
+TILE-REQ:		0		0		0		1
+
+### Total EFLX resources from current floorplan: ###
+                       184 IOBs
+                       140 Logic 6-LUT RBBs
+                              40 RBBs support RAM/SR
+
+Usage of Logic RBBs is 33.6%.
+    Logic-Memory RBB for RAM/Shift-Register is 0.0%.
+Usage of LUTs is 23.4%.
+    dual-LUTs is 5.4%.
+Usage of FF is 14.8%.
+    dual-FF is 1.6%.
+Usage of IO RBB is 5.4%.

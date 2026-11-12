@@ -1,0 +1,15 @@
+# Edit this file, then run ./gen_test.py and ./run_sim.sh
+# Each line is one test. The cache is wiped before the next line.
+# Addresses are hex, from 00 to FF. At most 8 tests, 64 addresses.
+#
+# Organisation: 2 sets, 2 ways, 4-byte lines. Index is address[2].
+# Tag is address[7:3]. An empty way is filled before the least recently used way.
+
+temporal: 00 00 00 00 00
+spatial: 00 01 02 03 04 05 06 07
+conflict: 00 10 00 10
+capacity: 00 04 08 0C 00 04 08 0C
+lru: 00 10 00 20 00 10
+independence: 00 04 00 04
+reverse: 03 02 01 00
+top: FC FF

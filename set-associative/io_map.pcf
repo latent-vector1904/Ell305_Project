@@ -1,0 +1,30 @@
+set_io clk_in             CLK
+set_io clk_en             OSC_EN
+
+# Same header clips as the direct-mapped exam.
+# FPGA_IO15 F15 hit, FPGA_IO14 F14 miss, FPGA_IO17 F17 memory read, FPGA_IO18 F18 request.
+set_io cache_hit          PIN_6
+set_io cache_hit_en       PIN_6_OE
+
+set_io cache_miss         PIN_5
+set_io cache_miss_en      PIN_5_OE
+
+set_io mem_read           PIN_8
+set_io mem_read_en        PIN_8_OE
+
+set_io request            PIN_9
+set_io request_en         PIN_9_OE
+
+set_io clk_out            PIN_3
+set_io clk_out_en         PIN_3_OE
+
+set_io done               PIN_20
+set_io done_en            PIN_20_OE
+
+# Test number. FPGA_IO10 F10, FPGA_IO11 F11, FPGA_IO8 F8.
+set_io phase[0]           PIN_1
+set_io phase_en[0]        PIN_1_OE
+set_io phase[1]           PIN_2
+set_io phase_en[1]        PIN_2_OE
+set_io phase[2]           PIN_23
+set_io phase_en[2]        PIN_23_OE

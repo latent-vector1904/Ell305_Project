@@ -1,0 +1,15 @@
+# io_map.pcf — LED blink on Shrike Lite (SLG47910V)
+#
+# Onboard FPGA LED is GPIO16 (package pin 7). It is not brought out to a header.
+# The same waveform is copied to GPIO0, which is the header pin labeled F0
+# (J2 pin 16). Clip the logic analyzer there. Ground clip on any GND pin
+# (J2 pin 8 or J2 pin 13).
+
+set_io clk       CLK         # internal 50 MHz oscillator
+set_io clk_en    OSC_EN
+
+set_io LED       PIN_7       # GPIO16 — onboard FPGA LED
+set_io LED_en    PIN_7_OE
+
+set_io probe     PIN_13      # GPIO0 — header J2 pin 16, silkscreen F0
+set_io probe_en  PIN_13_OE

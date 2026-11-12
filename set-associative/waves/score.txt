@@ -1,0 +1,33 @@
+samples 32767  rate 100 Hz
+pulses hit 132 miss 90 mem 91 request 223
+hit  median 33 samples  1.97 enable cycles  (FSM 2)
+miss  median 150 samples  8.94 enable cycles  (FSM 9)
+mem  median 67 samples  3.99 enable cycles  (FSM 4)
+request  median 17 samples  1.01 enable cycles  (FSM 1)
+groups 44
+  OK phase 1 spatial            4.63 s  want MHHHMHHH  got MHHHMHHH
+  OK phase 2 conflict          14.49 s  want MMHH  got MMHH
+  FAIL phase 3 capacity          21.01 s  want MMMMHHHH  got MMMMMHHHH
+  FAIL phase 4 lru               33.22 s  want MMHMHM  got MMHH
+  FAIL phase 5 independence      46.32 s  want MMHH  got MHH
+  FAIL phase 6 reverse           51.10 s  want MHHH  got MMHHH
+  OK phase 7 top               55.62 s  want MH  got MH
+  OK phase 0 temporal          59.30 s  want MHHHH  got MHHHH
+  OK phase 1 spatial           65.48 s  want MHHHMHHH  got MHHHMHHH
+  OK phase 2 conflict          75.35 s  want MMHH  got MMHH
+  OK phase 3 capacity          81.87 s  want MMMMHHHH  got MMMMHHHH
+  OK phase 4 lru               94.07 s  want MMHMHM  got MMHMHM
+  OK phase 5 independence     104.60 s  want MMHH  got MMHH
+  OK phase 6 reverse          111.12 s  want MHHH  got MHHH
+  OK phase 7 top              116.47 s  want MH  got MH
+  OK phase 0 temporal         120.15 s  want MHHHH  got MHHHH
+  OK phase 1 spatial          126.34 s  want MHHHMHHH  got MHHHMHHH
+  OK phase 2 conflict         136.21 s  want MMHH  got MMHH
+  OK phase 3 capacity         142.73 s  want MMMMHHHH  got MMMMHHHH
+  OK phase 4 lru              154.93 s  want MMHMHM  got MMHMHM
+  OK phase 5 independence     165.47 s  want MMHH  got MMHH
+  OK phase 6 reverse          171.99 s  want MHHH  got MHHH
+  OK phase 7 top              177.34 s  want MH  got MH
+  OK phase 0 temporal         181.02 s  want MHHHH  got MHHHH
+clean groups 38, matched 38, read errors 0
+PASS (4 full loops)

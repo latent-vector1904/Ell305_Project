@@ -1,0 +1,54 @@
+OK k=0 phase=0 addr=00 data=00 MISS
+OK k=1 phase=0 addr=00 data=00  HIT
+OK k=2 phase=0 addr=00 data=00  HIT
+OK k=3 phase=0 addr=00 data=00  HIT
+OK k=4 phase=0 addr=00 data=00  HIT
+OK k=5 phase=1 addr=00 data=00 MISS
+OK k=6 phase=1 addr=01 data=01  HIT
+OK k=7 phase=1 addr=02 data=02  HIT
+OK k=8 phase=1 addr=03 data=03  HIT
+OK k=9 phase=1 addr=04 data=04 MISS
+OK k=10 phase=1 addr=05 data=05  HIT
+OK k=11 phase=1 addr=06 data=06  HIT
+OK k=12 phase=1 addr=07 data=07  HIT
+OK k=13 phase=2 addr=00 data=00 MISS
+OK k=14 phase=2 addr=10 data=10 MISS
+OK k=15 phase=2 addr=00 data=00  HIT
+OK k=16 phase=2 addr=10 data=10  HIT
+OK k=17 phase=3 addr=00 data=00 MISS
+OK k=18 phase=3 addr=04 data=04 MISS
+OK k=19 phase=3 addr=08 data=08 MISS
+OK k=20 phase=3 addr=0c data=0c MISS
+OK k=21 phase=3 addr=00 data=00  HIT
+OK k=22 phase=3 addr=04 data=04  HIT
+OK k=23 phase=3 addr=08 data=08  HIT
+OK k=24 phase=3 addr=0c data=0c  HIT
+OK k=25 phase=4 addr=00 data=00 MISS
+OK k=26 phase=4 addr=10 data=10 MISS
+OK k=27 phase=4 addr=00 data=00  HIT
+OK k=28 phase=4 addr=20 data=20 MISS
+OK k=29 phase=4 addr=00 data=00  HIT
+OK k=30 phase=4 addr=10 data=10 MISS
+OK k=31 phase=5 addr=00 data=00 MISS
+OK k=32 phase=5 addr=04 data=04 MISS
+OK k=33 phase=5 addr=00 data=00  HIT
+OK k=34 phase=5 addr=04 data=04  HIT
+OK k=35 phase=6 addr=03 data=03 MISS
+OK k=36 phase=6 addr=02 data=02  HIT
+OK k=37 phase=6 addr=01 data=01  HIT
+OK k=38 phase=6 addr=00 data=00  HIT
+OK k=39 phase=7 addr=fc data=fc MISS
+OK k=40 phase=7 addr=ff data=ff  HIT
+ok=1263 bad=0 accesses=1263
+PHASE 0 hits=4 misses=1
+PHASE 1 hits=6 misses=2
+PHASE 2 hits=2 misses=2
+PHASE 3 hits=4 misses=4
+PHASE 4 hits=2 misses=4
+PHASE 5 hits=2 misses=2
+PHASE 6 hits=3 misses=1
+PHASE 7 hits=1 misses=1
+HIT_PULSES 738 bad_width 0 expect_width 2
+MISS_PULSES 525 bad_width 0 expect_width 9
+MEM_PULSES 525
+PASS

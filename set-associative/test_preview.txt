@@ -1,0 +1,65 @@
+2-way set-associative, 2 sets of 2 ways, 4 bytes per line.
+The cache is empty at the start of each test.
+Predicted from the address map. Simulation must match this shape.
+Hit time 2 enable cycles. Miss penalty 7 enable cycles.
+AMAT = 2 + miss rate x 7, in enable cycles. One enable cycle is 2^23 clocks of 50 MHz.
+M = miss, H = hit.
+
+0  temporal       M H H H H            misses 1/5  AMAT 3.40
+      00  MISS
+      00  HIT
+      00  HIT
+      00  HIT
+      00  HIT
+
+1  spatial        M H H H M H H H      misses 2/8  AMAT 3.75
+      00  MISS
+      01  HIT
+      02  HIT
+      03  HIT
+      04  MISS
+      05  HIT
+      06  HIT
+      07  HIT
+
+2  conflict       M M H H              misses 2/4  AMAT 5.50
+      00  MISS
+      10  MISS
+      00  HIT
+      10  HIT
+
+3  capacity       M M M M H H H H      misses 4/8  AMAT 5.50
+      00  MISS
+      04  MISS
+      08  MISS
+      0C  MISS
+      00  HIT
+      04  HIT
+      08  HIT
+      0C  HIT
+
+4  lru            M M H M H M          misses 4/6  AMAT 6.67
+      00  MISS
+      10  MISS
+      00  HIT
+      20  MISS
+      00  HIT
+      10  MISS
+
+5  independence   M M H H              misses 2/4  AMAT 5.50
+      00  MISS
+      04  MISS
+      00  HIT
+      04  HIT
+
+6  reverse        M H H H              misses 1/4  AMAT 3.75
+      03  MISS
+      02  HIT
+      01  HIT
+      00  HIT
+
+7  top            M H                  misses 1/2  AMAT 5.50
+      FC  MISS
+      FF  HIT
+
+8 tests, 41 addresses, 17 misses.

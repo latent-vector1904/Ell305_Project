@@ -1,0 +1,42 @@
+# io_map.pcf — Cache simulator on Shrike-lite (SLG47910V)
+# Probe with Zeroplus LAP-C 16032 after flashing FPGA_bitstream_MCU.bin
+
+# ── Clock (internal 50 MHz oscillator) ────────────────────────────────────────
+set_io clk_in   CLK
+set_io clk_en   OSC_EN
+
+# ── User inputs (jumpers / MCU GPIOs after flash) ─────────────────────────────
+# rst: HIGH = run; pulse low then high to restart
+set_io rst                PIN_13_IN
+# experiment_sel: 00=always0  01=seq0..7  10=alt0x00/0x10  11=0x00/40/80/C0
+set_io experiment_sel[0]  PIN_14_IN
+set_io experiment_sel[1]  PIN_15_IN
+
+# ── Logic analyzer outputs (Zeroplus channels) ────────────────────────────────
+set_io clk_out            PIN_17
+set_io clk_out_en         PIN_17_OE
+
+set_io cache_hit          PIN_18
+set_io cache_hit_en       PIN_18_OE
+
+set_io cache_miss         PIN_19
+set_io cache_miss_en      PIN_19_OE
+
+set_io mem_read           PIN_20
+set_io mem_read_en        PIN_20_OE
+
+set_io request            PIN_23
+set_io request_en         PIN_23_OE
+
+set_io done               PIN_24
+set_io done_en            PIN_24_OE
+
+set_io cache_state[0]     PIN_1
+set_io cache_state_en[0]  PIN_1_OE
+
+set_io cache_state[1]     PIN_2
+set_io cache_state_en[1]  PIN_2_OE
+
+# On-board FPGA LED
+set_io led                PIN_7
+set_io led_en             PIN_7_OE

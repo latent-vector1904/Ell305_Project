@@ -1,0 +1,4 @@
+exp=0 reqs=4 hits=3 misses=1 mem_tx=2 cycles=27
+exp=1 reqs=8 hits=6 misses=2 mem_tx=4 cycles=54
+exp=2 reqs=4 hits=0 misses=4 mem_tx=5 cycles=30
+exp=3 reqs=4 hits=0 misses=4 mem_tx=5 cycles=30

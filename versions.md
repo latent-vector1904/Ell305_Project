@@ -12,7 +12,7 @@ What changes is the list of addresses the design asks for. Each later version ke
 
 | | First version (`untitled`) | Version two | Version three |
 |---|---|---|---|
-| Folder | `fpga/untitled` | `fpga/version two` | `fpga/version three` |
+| Folder | `01-direct-mapped/04-first-image` | `01-direct-mapped/03-version-two` | `01-direct-mapped/02-version-three` |
 | How many tests | 1 | 2 | 8 |
 | What it asks | Address `0x00`, over and over | Same address, then addresses `0` through `7` | Those two, plus conflict, a full cache, replacement, separate lines, a backward line, and the last byte in memory |
 | What a pass looks like | One miss, then hits | Miss and four hits, then miss, three hits, miss, three hits | Five different shapes in the first 48 seconds of the recording |
@@ -20,8 +20,8 @@ What changes is the list of addresses the design asks for. Each later version ke
 
 ## First version — only the same address
 
-Folder: `fpga/untitled`.
-Recording from that board run: `fpga/untitled/ffpga/build/bitstream/cache_la.sr`.
+Folder: `01-direct-mapped/04-first-image`.
+Recording from that board run: `01-direct-mapped/04-first-image/ffpga/build/bitstream/cache_la.sr`.
 
 The only request is address `0x00`. The cache is empty, so the first read misses and loads bytes `0, 1, 2, 3`. The next reads of `0x00` hit, because it is the same address and the line is still there. Then the cache is wiped and the same thing happens again, about every 5 seconds.
 
@@ -31,9 +31,9 @@ This shows temporal locality and nothing else. It never asks for address `1` or 
 
 ## Version two — same address, then the neighbors
 
-Folder: `fpga/version two`.
-Recording: `fpga/version two/waves/locality.sr`.
-Write-up: `fpga/version two/test_cases.md`.
+Folder: `01-direct-mapped/03-version-two`.
+Recording: `01-direct-mapped/03-version-two/waves/locality.sr`.
+Write-up: `01-direct-mapped/03-version-two/test_cases.md`.
 
 Two tests take turns. The cache is cleared between them.
 
@@ -46,9 +46,9 @@ Version two still cannot show a fight over one slot. Every address it uses is ei
 
 ## Version three — the full set of questions
 
-Folder: `fpga/version three`.
-Recording: `fpga/version three/waves/exam.sr`.
-Write-up of each pulse: `fpga/version three/explainer.md`.
+Folder: `01-direct-mapped/02-version-three`.
+Recording: `01-direct-mapped/02-version-three/waves/exam.sr`.
+Write-up of each pulse: `01-direct-mapped/02-version-three/explainer.md`.
 
 The cache is still the same 16 bytes. The exam adds every result this cache can actually produce. A simulation checked the address, the hit or miss, and the returned byte on 1,078 accesses. The recording’s clear picture is the first 48 seconds.
 

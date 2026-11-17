@@ -4,7 +4,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
-SHRIKE="$(cd "$ROOT/../shrike-gen" && pwd)"
+SHRIKE="$(cd "$ROOT/../../shrike-gen" && pwd)"
 STAGE="${CACHE_BUILD_DIR:-$HOME/cache_sim_build}"
 YOSYS="/opt/go-configure-sw-hub/bin/external/yosys/v59/yosys"
 

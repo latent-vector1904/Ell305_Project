@@ -1,0 +1,43 @@
+# Run from this directory: doxygen Doxyfile
+# Verilog is summarized by verilog_filter.py. Doxygen's own parsers are C and VHDL.
+#
+# Folder order is the order the designs were built:
+#   01-direct-mapped/01-shared          decoder, memory, storage, fill, controller
+#   01-direct-mapped/02-version-three   eight-test exam
+#   01-direct-mapped/03-version-two     temporal pass, then neighbouring bytes
+#   01-direct-mapped/04-first-image     one address, repeated
+#   01-direct-mapped/05-early-board     selectable experiment
+#   02-two-way                          two-way set-associative exam
+#   03-fully-associative/01-board       clock-enabled LRU image
+#   03-fully-associative/02-simulation  same cache, steps every clock
+#   03-fully-associative/03-testbenches
+# Inside a folder the numeric prefix is the order a request uses the modules,
+# then the top, then the testbench. Module names are unchanged.
+
+PROJECT_NAME           = "Cache simulator Verilog"
+PROJECT_BRIEF          = "Unique Verilog sources, grouped by organisation"
+OUTPUT_DIRECTORY       = doxygen_out
+INPUT                  = .
+FILE_PATTERNS          = *.v
+RECURSIVE              = YES
+EXCLUDE_PATTERNS       = */doxygen_out/*
+
+EXTENSION_MAPPING      = v=C
+FILTER_PATTERNS        = *.v="python3 verilog_filter.py"
+
+EXTRACT_ALL            = YES
+JAVADOC_AUTOBRIEF      = YES
+OPTIMIZE_OUTPUT_FOR_C  = YES
+FULL_PATH_NAMES        = YES
+STRIP_FROM_PATH        = .
+CASE_SENSE_NAMES       = YES
+QUIET                  = YES
+WARN_IF_UNDOCUMENTED   = NO
+WARN_IF_DOC_ERROR      = YES
+
+GENERATE_HTML          = YES
+GENERATE_LATEX         = YES
+GENERATE_XML           = NO
+HTML_OUTPUT            = html
+LATEX_OUTPUT           = latex
+LATEX_BATCHMODE        = YES

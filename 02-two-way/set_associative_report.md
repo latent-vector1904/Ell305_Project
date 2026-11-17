@@ -20,7 +20,7 @@ On the board the controller and the fetch unit advance only when the clock enabl
 
 ## What was done
 
-The design lives in `fpga/set-associative/`. The sources are the address decoder, the two-way store with one LRU bit per set, the controller, the block fetch unit, the memory model, the sequencer, and the top level that divides the oscillator.
+The design lives in `02-two-way/`. The sources are the address decoder, the two-way store with one LRU bit per set, the controller, the block fetch unit, the memory model, the sequencer, and the top level that divides the oscillator.
 
 `test_template.txt` holds the eight tests, 41 addresses. The cache is cleared between tests. `gen_test.py` reads that list and applies the replacement rule above. It does not read a waveform. It writes two things: the address ROM inside `exam_seq.v`, and the expected hit or miss for every address inside `tb_exam.v`. The human-readable copy of the prediction is `test_preview.txt`. That file is the "before" column of the tables below.
 

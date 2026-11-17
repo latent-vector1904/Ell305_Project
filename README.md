@@ -8,13 +8,13 @@ Direct-mapped, two-way, and fully associative cache designs, plus the C++ model,
 |---|---|
 | `src/cpp` | C++ model. `make check` runs the hit/miss checks. |
 | `src/web` | Single-page view of the same model. Open `index.html` in a browser. |
-| `fpga/untitled` | First board image. One address, repeated. |
-| `fpga/version two` | Temporal test, then the neighbouring bytes. |
-| `fpga/version three` | Full exam: conflict, capacity, replacement, and the rest. |
-| `fpga/set-associative` | Two-way set-associative image. |
-| `fpga/lru` | Fully associative LRU image. |
-| `fpga/cache_sim`, `fpga/shrike_fixed` | Earlier board design and the fixed simulation sources. |
-| `fpga/bitstream` | Flash images and the board flash script. |
+| `01-direct-mapped/04-first-image` | First board image. One address, repeated. |
+| `01-direct-mapped/03-version-two` | Temporal test, then the neighbouring bytes. |
+| `01-direct-mapped/02-version-three` | Full exam: conflict, capacity, replacement, and the rest. |
+| `02-two-way` | Two-way set-associative image. |
+| `03-fully-associative` | Fully associative LRU image. |
+| `01-direct-mapped/05-early-board` | Earlier board design. |
+| `bitstream` | Flash images and the board flash script. |
 | `fpga/shrike-gen` | Project generator used to build the board projects. |
 | `report` | Write-up. `vfinal.pdf` is the current report. |
 | `software` | Dependency lists, plus the Icarus Verilog package the simulators use. |
@@ -40,8 +40,8 @@ Installed copies of Node, `node_modules`, and Python `site-packages` are not in 
 
 ```bash
 make check
-python3 fpga/lru/run_sim.py
-bash fpga/set-associative/run_sim.sh
+python3 03-fully-associative/run_sim.py
+bash 02-two-way/run_sim.sh
 bash fpga/shrike_fixed/run_sim.sh
 ```
 

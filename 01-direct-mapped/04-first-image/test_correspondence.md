@@ -1,7 +1,7 @@
 # Cache simulator: tests and observations
 
 Board: Shrike Lite. Analyzer: Zeroplus LAP-C 16032, recorded in PulseView.
-Capture: `fpga/untitled/ffpga/build/bitstream/cache_la.sr`
+Capture: `01-direct-mapped/04-first-image/ffpga/build/bitstream/cache_la.sr`
 Sample rate: 1 kHz. Threshold: 1.5 V. Length: 32.8 s. Taken 6 Nov 2026, 12:30.
 
 The bitstream that produced the waves runs one test only: always read address `0x00`. After four lookups it clears the cache and starts again, so the same pass repeats about every 5 s. The other address patterns (sequential, conflict, four cold misses) were not run on the board.

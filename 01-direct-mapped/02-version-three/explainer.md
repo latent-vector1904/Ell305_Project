@@ -1,6 +1,6 @@
 # Explainer: what the tests do, and what the waves show
 
-Recording: `fpga/version three/waves/exam.sr`
+Recording: `01-direct-mapped/02-version-three/waves/exam.sr`
 Board: Shrike Lite. Analyzer: Zeroplus LAP-C 16032.
 Sample rate: 500 Hz. Length: 65.5 seconds. The clear picture is the first 48 seconds.
 

@@ -20,11 +20,11 @@ Two copies of the logic exist.
 | Copy | Where | Role |
 |---|---|---|
 | Simulation | `lru/src/` | No clock enable. This is the design the long testbench runs. |
-| Board | `fpga/lru/ffpga/src/` | Same steps, but only when `ce` is high. |
+| Board | `03-fully-associative/ffpga/src/` | Same steps, but only when `ce` is high. |
 
 On the board, `ce` is one pulse every \(2^{23}\) cycles of the 50 MHz oscillator (`DIV_MSB = 22` in `cache_sim_top`). One cache step is therefore exactly 8,388,608 oscillator cycles, which is 0.16777216 s. The stretch is only so the analyzer can see the pulses. It does not change how many steps a hit or a miss takes.
 
-The place-and-route of `fpga/lru/ffpga/build/bitstream/FPGA_bitstream_MCU.bin` used 35% of the logic blocks, 32% of the LUTs, and 17% of the flip-flops. It was flashed with `shrike.flash()` over the board's MicroPython port.
+The place-and-route of `03-fully-associative/ffpga/build/bitstream/FPGA_bitstream_MCU.bin` used 35% of the logic blocks, 32% of the LUTs, and 17% of the flip-flops. It was flashed with `shrike.flash()` over the board's MicroPython port.
 
 The analyzer clips that are switching:
 

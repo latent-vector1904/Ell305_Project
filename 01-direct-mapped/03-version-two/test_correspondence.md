@@ -1,7 +1,7 @@
 # Version two: locality tests and what the analyzer showed
 
-Bitstream: `fpga/version two/ffpga/build/bitstream/FPGA_bitstream_MCU.bin`
-Capture: `fpga/version two/waves/locality.sr` (1 kHz, 1.5 V, 32.8 s, 6 Nov 2026 12:45)
+Bitstream: `01-direct-mapped/03-version-two/ffpga/build/bitstream/FPGA_bitstream_MCU.bin`
+Capture: `01-direct-mapped/03-version-two/waves/locality.sr` (1 kHz, 1.5 V, 32.8 s, 6 Nov 2026 12:45)
 
 Clips were left where they were. This bitstream uses the same pins:
 
